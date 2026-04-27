@@ -56,6 +56,15 @@
         background: #45a049;
     }
 
+    .blue-btn {
+        background: #2196F3;
+        margin-top: 10px;
+    }
+
+    .blue-btn:hover {
+        background: #1976D2;
+    }
+
     .result {
         margin-top: 15px;
         background: #f1f8f4;
@@ -68,6 +77,12 @@
     .row {
         display: flex;
         gap: 10px;
+    }
+
+    .line {
+        display: flex;
+        justify-content: space-between;
+        padding: 4px 0;
     }
 </style>
 </head>
@@ -98,10 +113,10 @@
             </select>
         </div>
 
-        <button onclick="calculateTime()">Calculate Time</button>
-        <button onclick="calculateTime24()" style="margin-top:10px; background:#2196F3;">
-    Calculate (24H)
-</button>
+        <button onclick="calculateTime()">Calculate (AM/PM)</button>
+        <button onclick="calculateTime24()" class="blue-btn">
+            Calculate (24H)
+        </button>
 
         <div class="result" id="timeOutput"></div>
     </div>
@@ -122,6 +137,43 @@
 
 <script>
 
+// ---------- AM/PM FUNCTION ----------
+function convertToMinutes(time, period) {
+    let [hours, minutes] = time.split(":").map(Number);
+
+    if (period === "PM" && hours !== 12) hours += 12;
+    if (period === "AM" && hours === 12) hours = 0;
+
+    return hours * 60 + minutes;
+}
+
+function calculateTime() {
+    let start = document.getElementById("start24").value;
+    let end = document.getElementById("end24").value;
+    let startPeriod = document.getElementById("startPeriod").value;
+    let endPeriod = document.getElementById("endPeriod").value;
+
+    if (!start || !end) {
+        alert("Please select both times");
+        return;
+    }
+
+    let startMin = convertToMinutes(start, startPeriod);
+    let endMin = convertToMinutes(end, endPeriod);
+
+    let diff = endMin - startMin;
+
+    if (diff < 0) diff += 24 * 60;
+
+    let hours = Math.floor(diff / 60);
+    let minutes = diff % 60;
+
+    document.getElementById("timeOutput").innerHTML =
+        `AM/PM Difference: ${hours} hr ${minutes} min`;
+}
+
+
+// ---------- 24H FUNCTION ----------
 function convertToMinutes24(time) {
     let [hours, minutes] = time.split(":").map(Number);
     return hours * 60 + minutes;
@@ -141,15 +193,40 @@ function calculateTime24() {
 
     let diff = endMin - startMin;
 
-    if (diff < 0) {
-        diff += 24 * 60;
-    }
+    if (diff < 0) diff += 24 * 60;
 
     let hours = Math.floor(diff / 60);
     let minutes = diff % 60;
 
     document.getElementById("timeOutput").innerHTML =
         `24H Difference: ${hours} hr ${minutes} min`;
+}
+
+
+// ---------- SAVINGS FUNCTION ----------
+function calculateSavings() {
+    let amount = document.getElementById("amount").value;
+
+    if (amount <= 0 || isNaN(amount)) {
+        alert("Enter valid amount");
+        return;
+    }
+
+    let utilities = amount * 0.5;
+    let shortTerm = amount * 0.2;
+    let longTerm = amount * 0.15;
+    let charity = amount * 0.05;
+    let freedom = amount * 0.05;
+    let play = amount * 0.05;
+
+    document.getElementById("savingsOutput").innerHTML = `
+        <div class="line"><span>Utilities</span><span>₹ ${utilities.toFixed(2)}</span></div>
+        <div class="line"><span>Short-term</span><span>₹ ${shortTerm.toFixed(2)}</span></div>
+        <div class="line"><span>Long-term</span><span>₹ ${longTerm.toFixed(2)}</span></div>
+        <div class="line"><span>Charity</span><span>₹ ${charity.toFixed(2)}</span></div>
+        <div class="line"><span>Freedom</span><span>₹ ${freedom.toFixed(2)}</span></div>
+        <div class="line"><span>Play</span><span>₹ ${play.toFixed(2)}</span></div>
+    `;
 }
 
 </script>
