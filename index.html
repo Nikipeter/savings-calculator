@@ -1,47 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Savings Divider</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
-        input { padding: 8px; width: 200px; }
-        button { padding: 8px 12px; margin-top: 10px; cursor: pointer; }
-        .result { margin-top: 20px; font-weight: bold; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Calculators</title>
+
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background: #f4f6f9;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 500px;
+    }
+
+    .card {
+        background: #fff;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        background: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #45a049;
+    }
+
+    .result {
+        margin-top: 15px;
+        background: #f1f8f4;
+        padding: 12px;
+        border-radius: 8px;
+        font-weight: bold;
+        color: #2e7d32;
+    }
+
+    .row {
+        display: flex;
+        gap: 10px;
+    }
+</style>
 </head>
+
 <body>
-    <h2>Savings Divider</h2>
-    <input type="number" id="amount" placeholder="Enter amount">
-    <button onclick="calculate()">Calculate</button>
 
-    <div class="result" id="output"></div>
+<div class="container">
 
-    <script>
-        function calculate() {
-            let amount = document.getElementById("amount").value;
-            if (amount <= 0 || isNaN(amount)) {
-                alert("Please enter a valid amount");
-                return;
-            }
-            
-            let utilities = amount * 50 / 100;
-            let shortTerm = amount * 20 / 100;
-            let longTerm = amount * 15 / 100;
-            let charity = amount * 5 / 100;
-            let financialFreedom = amount * 5 / 100;
-            let play = amount * 5 / 100;
+    <!-- TIME CALCULATOR -->
+    <div class="card">
+        <h2>⏱ Time Difference Calculator</h2>
 
-            document.getElementById("output").innerHTML = `
-                <p>Utilities: ₹${utilities}</p>
-                <p>Short-term Savings: ₹${shortTerm}</p>
-                <p>Long-term Savings: ₹${longTerm}</p>
-                <p>Charity: ₹${charity}</p>
-                <p>Financial Freedom: ₹${financialFreedom}</p>
-                <p>Playing: ₹${play}</p>
-            `;
-        }
-    </script>
+        <label>Start Time</label>
+        <div class="row">
+            <input type="time" id="start24">
+            <select id="startPeriod">
+                <option>AM</option>
+                <option>PM</option>
+            </select>
+        </div>
+
+        <label>End Time</label>
+        <div class="row">
+            <input type="time" id="end24">
+            <select id="endPeriod">
+                <option>AM</option>
+                <option>PM</option>
+            </select>
+        </div>
+
+        <button onclick="calculateTime()">Calculate Time</button>
+        <button onclick="calculateTime24()" style="margin-top:10px; background:#2196F3;">
+    Calculate (24H)
+</button>
+
+        <div class="result" id="timeOutput"></div>
+    </div>
+
+
+    <!-- SAVINGS CALCULATOR -->
+    <div class="card">
+        <h2>💰 Savings Divider</h2>
+
+        <input type="number" id="amount" placeholder="Enter amount">
+
+        <button onclick="calculateSavings()">Calculate Savings</button>
+
+        <div class="result" id="savingsOutput"></div>
+    </div>
+
+</div>
+
+<script>
+
+function convertToMinutes24(time) {
+    let [hours, minutes] = time.split(":").map(Number);
+    return hours * 60 + minutes;
+}
+
+function calculateTime24() {
+    let start = document.getElementById("start24").value;
+    let end = document.getElementById("end24").value;
+
+    if (!start || !end) {
+        alert("Please select both times");
+        return;
+    }
+
+    let startMin = convertToMinutes24(start);
+    let endMin = convertToMinutes24(end);
+
+    let diff = endMin - startMin;
+
+    if (diff < 0) {
+        diff += 24 * 60;
+    }
+
+    let hours = Math.floor(diff / 60);
+    let minutes = diff % 60;
+
+    document.getElementById("timeOutput").innerHTML =
+        `24H Difference: ${hours} hr ${minutes} min`;
+}
+
+</script>
+
 </body>
 </html>
